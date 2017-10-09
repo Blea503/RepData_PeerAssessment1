@@ -151,7 +151,7 @@ library(&quot;lubridate&quot;, lib.loc=&quot;~/R/win-library/3.4&quot;)</code></
 <pre><code>## The following object is masked from 'package:base':
 ## 
 ##     date</code></pre>
-<pre class="r"><code>dat &lt;- read.csv(&quot;activity.csv&quot;, header = TRUE, sep = &quot;,&quot;, colClasses = c(&quot;numeric&quot;, &quot;Date&quot;, &quot;numeric&quot;))</code></pre>
+<pre class="r"><code>dat &lt;- read.csv(&quot;activity.csv&quot;, header = TRUE, sep = &quot;,&quot;, colClasses = c(&quot;numeric&quot;, &quot;Date&quot;, &quot;numeric&quot;),na.strings = &quot;?&quot;)</code></pre>
 <pre class="r"><code>tot_steps &lt;- ddply(dat, .(date), summarise, tot_steps = sum(steps, na.rm = TRUE))
 summary(tot_steps)</code></pre>
 <pre><code>##       date              tot_steps    

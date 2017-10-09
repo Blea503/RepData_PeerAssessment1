@@ -11,10 +11,11 @@ library("plyr", lib.loc="~/R/win-library/3.4")
 library("dplyr", lib.loc="~/R/win-library/3.4")
 library("magrittr", lib.loc="~/R/win-library/3.4")
 library("lubridate", lib.loc="~/R/win-library/3.4")
-dat <- read.csv("activity.csv", header = TRUE, sep = ",", colClasses = c("numeric", "Date", "numeric"))
+library("knitr", lib.loc="~/R/win-library/3.4")
+dat <- read.csv("activity.csv", header = TRUE, sep = ",", colClasses = c("numeric", "Date", "numeric"),na.strings = "?")
 ```
 
-```{r, tot_steps, echo=TRUE}
+```{r, plot1, echo=TRUE}
 tot_steps <- ddply(dat, .(date), summarise, tot_steps = sum(steps, na.rm = TRUE))
 summary(tot_steps)
 hist(tot_steps$tot_steps, main = "Total steps per day", xlab = "Mean total number of steps per day")
@@ -24,7 +25,7 @@ text(20000, 15, paste(c("mean ="), round(mean(tot_steps$tot_steps, na.rm = TRUE)
 text(20000, 10, paste(c("median ="), round(median(tot_steps$tot_steps, na.rm = TRUE), 1)), col="blue")
 ```
 
-```{r, activity pattern, echo=TRUE}
+```{r, plot2, echo=TRUE}
 dpattern <- ddply(dat, .(interval), summarise, meansteps = mean(steps, na.rm = TRUE))
 with(dpattern, plot(interval, meansteps, type="l"))
 max_step_interval <- dpattern %>% arrange(desc(meansteps))
@@ -32,7 +33,7 @@ max_int <- max_step_interval[1,1]
 text(1500, 150, paste(c("5-minute interval maximum steps ="), max_int))
 ```
 Replace NAs with the median steps per interval
-```{r, Imputing missing values, echo=TRUE}
+```{r, plot3, echo=TRUE}
 number_Nas <- sum(is.na(dat$steps))
 missing <- ddply(dat, .(interval), transform, steps=ifelse(is.na(steps), median(steps, na.rm=TRUE), steps))
 tot_steps2 <- ddply(missing, .(date), summarise, tot_steps = sum(steps, na.rm = TRUE))
@@ -44,7 +45,7 @@ text(20000, 15, paste(c("mean ="), round(mean(tot_steps2$tot_steps, na.rm = TRUE
 text(20000, 10, paste(c("median ="), round(median(tot_steps2$tot_steps, na.rm = TRUE), 1)), col="blue")
 ```
 Are there differences in activity patterns between weekdays and weekends?
-```{r, weekday pattern, echo=TRUE}
+```{r, plot4, echo=TRUE}
 library("ggplot2", lib.loc="~/R/win-library/3.4")
 dat$weekday <- weekdays(dat$date)
 dat$day <- ifelse(dat$weekday =="Saturday" | dat$weekday=="Sunday", "weekend", "weekday")
