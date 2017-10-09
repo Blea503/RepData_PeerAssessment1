@@ -17,6 +17,7 @@ dat <- read.csv("activity.csv", header = TRUE, sep = ",", colClasses = c("numeri
 ```
 
 ```{r, plot1, echo=TRUE}
+png(filename = "plot1.png")
 tot_steps <- ddply(dat, .(date), summarise, tot_steps = sum(steps, na.rm = TRUE))
 summary(tot_steps)
 hist(tot_steps$tot_steps, main = "Total steps per day", xlab = "Mean total number of steps per day")
@@ -27,6 +28,7 @@ text(20000, 10, paste(c("median ="), round(median(tot_steps$tot_steps, na.rm = T
 ```
 
 ```{r, plot2, echo=TRUE}
+png(filename = "plot2.png")
 dpattern <- ddply(dat, .(interval), summarise, meansteps = mean(steps, na.rm = TRUE))
 with(dpattern, plot(interval, meansteps, type="l"))
 max_step_interval <- dpattern %>% arrange(desc(meansteps))
@@ -35,6 +37,7 @@ text(1500, 150, paste(c("5-minute interval maximum steps ="), max_int))
 ```
 Replace NAs with the median steps per interval
 ```{r, plot3, echo=TRUE}
+png(filename = "plot3.png")
 number_Nas <- sum(is.na(dat$steps))
 missing <- ddply(dat, .(interval), transform, steps=ifelse(is.na(steps), median(steps, na.rm=TRUE), steps))
 tot_steps2 <- ddply(missing, .(date), summarise, tot_steps = sum(steps, na.rm = TRUE))
@@ -52,7 +55,7 @@ dat$weekday <- weekdays(dat$date)
 dat$day <- ifelse(dat$weekday =="Saturday" | dat$weekday=="Sunday", "weekend", "weekday")
 df <- aggregate(steps ~ interval + day, data=dat, mean)
 g <- ggplot(data = df, aes(interval, steps))+ geom_line() + facet_grid(day ~ .)
-g
+ggsave(filename = "plot4.png")
 ```
 
 
